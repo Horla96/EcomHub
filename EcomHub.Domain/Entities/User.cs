@@ -13,7 +13,7 @@ public class User : IdentityUser<Guid>
     public bool IsDeleted { get; set; } = false;
 
     //BaseEntity
-    public string CreatedBy { get; set; }
+    public string? CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public string? UpdatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
