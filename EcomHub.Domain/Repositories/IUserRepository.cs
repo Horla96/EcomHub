@@ -9,4 +9,5 @@ public interface IUserRepository
     Task<IEnumerable<User>> GetAllUserAsync();
     Task UpdateUserAsync(User user);
     Task DeleteUserAsync(User user);
+    Task<Role> GetRoleByName(string name);
 }
