@@ -28,23 +28,20 @@ public class UserRepository : IUserRepository
     }
 
     public async Task<IEnumerable<User>> GetAllUserAsync()
-    {
-        return await _context.Users
+        => await _context.Users
             .Where(u => !u.IsDeleted)
             .ToListAsync();
-    }
+
 
     public async Task<User> GetUserByEmailAsync(string email)
-    {
-        return await _context.Users
+        => await _context.Users
             .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted);
-    }
+
 
     public async Task<User> GetUserByIdAsync(Guid Id)
-    {
-        return await _context.Users
+        => await _context.Users
             .FirstOrDefaultAsync(u => u.Id == Id && !u.IsDeleted);
-    }
+
 
     public async Task UpdateUserAsync(User user)
     {
