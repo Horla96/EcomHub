@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EcomHub.Application\EcomHub.Application.csproj" />
     <ProjectReference Include="..\EcomHub.Infrastructure\EcomHub.Infrastructure.csproj" />
   </ItemGroup>
 
