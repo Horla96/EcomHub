@@ -18,4 +18,5 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     public DbSet<Stock> Stocks { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Role> Roles { get; set; }
 }
