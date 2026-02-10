@@ -37,6 +37,7 @@ public class UserService : IUserService
 			FirstName = request.FirstName,
 			LastName = request.LastName,
 			FullName = request.FirstName + " " + request.LastName,
+			UserName = request.UserName,
 			Role = request.Role,
             IsActive = true,
 			IsDeleted = false,
