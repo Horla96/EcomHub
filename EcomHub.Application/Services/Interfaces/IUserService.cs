@@ -6,4 +6,5 @@ namespace EcomHub.Application.Services.Interfaces;
 public interface IUserService
 {
     Task<RegisterUserResponseDto> RegisterAsync(RegisterUserResquestDto request);
+    Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
 }

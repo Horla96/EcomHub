@@ -9,6 +9,7 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
+        
     }
     public DbSet<CartItems> CartItems { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -18,4 +19,13 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     public DbSet<Stock> Stocks { get; set; }
     public DbSet<User> Users { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<User>()
+            .Property(u => u.Role)
+            .HasConversion<string>();
+    }
 }

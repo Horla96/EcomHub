@@ -19,6 +19,17 @@ namespace EcomHub.API.Controllers
         public async Task<IActionResult> RegisterUser(RegisterUserResquestDto request)
         {
             var result = await _userService.RegisterAsync(request);
+
+            return Ok(result);
+        }
+
+        [HttpPost("login")]
+        [ProducesDefaultResponseType(typeof(LoginResponseDto))]
+        public async Task<IActionResult> Login(LoginRequestDto request)
+        {
+            var result = await _userService.LoginAsync(request);
+
+            //return StatusCode((int)result.StatusCode, result);
             return Ok(result);
         }
     }
