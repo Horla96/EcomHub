@@ -72,10 +72,21 @@ public class UserService : IUserService
 		if (existingUser != null)
 			return new RegisterUserResponseDto
 			{
-				Message = "User Already Existes",
+				Message = "User already exists",
 				Status = false,
 				StatusCode = HttpStatusCode.NotFound
 			};
+
+		var roleExists = await _userRepository.GetRoleByName(request.Role.ToString());
+		if(roleExists is null)
+		{
+			return new RegisterUserResponseDto
+			{
+				Message = "Role does not exists",
+				Status = false,
+				StatusCode = HttpStatusCode.NotFound
+			};
+		}
 
 		var user = new User
 		{
@@ -86,6 +97,7 @@ public class UserService : IUserService
 			FullName = request.FirstName + " " + request.LastName,
 			UserName = request.UserName,
 			Role = request.Role,
+			UserName = request.UserName,
             IsActive = true,
 			IsDeleted = false,
 			CreatedAt = DateTime.UtcNow,
@@ -104,7 +116,7 @@ public class UserService : IUserService
         }
         else
 		{
-			var userRoleResult = await _userManager.AddToRoleAsync(user, request.Role.ToString());
+			var userRoleResult = await _userManager.AddToRoleAsync(user, roleExists.Name);
 			if (!userRoleResult.Succeeded)
 			{
 				return new RegisterUserResponseDto
