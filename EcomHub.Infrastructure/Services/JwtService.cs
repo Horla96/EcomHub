@@ -2,13 +2,9 @@
 using EcomHub.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EcomHub.Infrastructure.Services;
 
@@ -41,7 +37,7 @@ public class JwtService : IJwtService
 
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var expiration = DateTime.UtcNow.AddMinutes(30);
+        var expiration = DateTime.UtcNow.AddMinutes(5);
 
         var token = new JwtSecurityToken(
               issuer: _configuration["Jwt:Issuer"],
@@ -50,10 +46,7 @@ public class JwtService : IJwtService
               expires: expiration,
               signingCredentials: credentials
           );
-        return (
-                new JwtSecurityTokenHandler().WriteToken(token),
-                expiration
-            );
+        return (new JwtSecurityTokenHandler().WriteToken(token), expiration);
     }
 
     public string GenerateRefreshToken()

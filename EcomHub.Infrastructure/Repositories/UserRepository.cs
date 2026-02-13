@@ -42,6 +42,6 @@ public class UserRepository : IUserRepository
     }
 
     public async Task<Role> GetRoleByName(string name)
-    => await _context.Roles
+    => (Role)await _context.Roles
         .FirstOrDefaultAsync(x => x.Name.Equals(name));
 }

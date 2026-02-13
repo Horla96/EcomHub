@@ -1,4 +1,5 @@
-﻿using EcomHub.Application.Interfaces;
+﻿using EcomHub.Application.DTOs.Requests;
+using EcomHub.Application.Interfaces;
 using EcomHub.Application.Services.Interfaces;
 using EcomHub.Domain.DTOs.Requests;
 using EcomHub.Domain.DTOs.Responses;
@@ -97,7 +98,6 @@ public class UserService : IUserService
 			FullName = request.FirstName + " " + request.LastName,
 			UserName = request.UserName,
 			Role = request.Role,
-			UserName = request.UserName,
             IsActive = true,
 			IsDeleted = false,
 			CreatedAt = DateTime.UtcNow,
