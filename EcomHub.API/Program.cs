@@ -1,9 +1,11 @@
+using EcomHub.Application.Interfaces;
 using EcomHub.Application.Services.Implementation;
 using EcomHub.Application.Services.Interfaces;
 using EcomHub.Domain.Entities;
 using EcomHub.Domain.Repositories;
 using EcomHub.Infrastructure;
 using EcomHub.Infrastructure.Repositories;
+using EcomHub.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
@@ -21,6 +23,10 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
+
+//Jwt
+builder.Services.AddScoped<IJwtService, JwtService>();
+
 
 //Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();

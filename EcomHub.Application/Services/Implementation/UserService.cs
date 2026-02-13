@@ -1,4 +1,5 @@
-﻿using EcomHub.Application.Services.Interfaces;
+﻿using EcomHub.Application.Interfaces;
+using EcomHub.Application.Services.Interfaces;
 using EcomHub.Domain.DTOs.Requests;
 using EcomHub.Domain.DTOs.Responses;
 using EcomHub.Domain.Entities;
@@ -13,13 +14,59 @@ public class UserService : IUserService
 {
 	private readonly IUserRepository _userRepository;
 	private readonly UserManager<User> _userManager;
-    public UserService(IUserRepository userRepository, UserManager<User> userManager)
+    private readonly SignInManager<User> _signInManager;
+    private readonly IJwtService _jwtService;
+    // private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    public UserService(IUserRepository userRepository, UserManager<User> userManager, SignInManager<User> signInManager, IJwtService jwtService)
 	{
 		_userRepository = userRepository;	
 		_userManager = userManager;
+		_signInManager = signInManager;
+		_jwtService = jwtService;
     }
 
-	public async Task<RegisterUserResponseDto> RegisterAsync(RegisterUserResquestDto request)
+    public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+
+        if (user == null)
+        {
+            return new LoginResponseDto
+            {
+                Message = "Invalid email or password",
+                Status = false,
+                StatusCode = HttpStatusCode.Unauthorized
+            };
+        }
+
+		var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+
+        if (!result.Succeeded)
+        {
+            return new LoginResponseDto
+            {
+                Message = "Invalid email or password",
+                Status = false,
+                StatusCode = HttpStatusCode.Unauthorized
+            };
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        var tokenResult = _jwtService.GenerateAccessToken(user, roles);
+
+
+        return new LoginResponseDto
+        {
+            Message = "Login successful",
+            Status = true,
+            StatusCode = HttpStatusCode.OK,
+            Token = tokenResult.Token,
+            Expiration = tokenResult.Expiration
+        };
+    }
+
+    public async Task<RegisterUserResponseDto> RegisterAsync(RegisterUserResquestDto request)
 	{
 		var existingUser = await _userRepository.GetUserByEmailAsync(request.Email);
 		if (existingUser != null)
@@ -48,6 +95,7 @@ public class UserService : IUserService
 			FirstName = request.FirstName,
 			LastName = request.LastName,
 			FullName = request.FirstName + " " + request.LastName,
+			UserName = request.UserName,
 			Role = request.Role,
 			UserName = request.UserName,
             IsActive = true,
