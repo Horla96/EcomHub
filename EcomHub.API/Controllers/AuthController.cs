@@ -29,7 +29,6 @@ namespace EcomHub.API.Controllers
         {
             var result = await _userService.LoginAsync(request);
 
-            //return StatusCode((int)result.StatusCode, result);
             return Ok(result);
         }
     }
