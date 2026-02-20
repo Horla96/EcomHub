@@ -18,6 +18,8 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     public DbSet<Stock> Stocks { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Otp> Otps { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
