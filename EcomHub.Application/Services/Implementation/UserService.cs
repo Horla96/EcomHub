@@ -1,11 +1,14 @@
 ﻿using EcomHub.Application.DTOs.Requests;
+using EcomHub.Application.DTOs.Responses;
 using EcomHub.Application.Interfaces;
 using EcomHub.Application.Services.Interfaces;
 using EcomHub.Domain.DTOs.Requests;
 using EcomHub.Domain.DTOs.Responses;
 using EcomHub.Domain.Entities;
 using EcomHub.Domain.Repositories;
+using EcomHub.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Net;
 
@@ -17,13 +20,16 @@ public class UserService : IUserService
 	private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly IJwtService _jwtService;
-    // private readonly IJwtTokenGenerator _jwtTokenGenerator;
-    public UserService(IUserRepository userRepository, UserManager<User> userManager, SignInManager<User> signInManager, IJwtService jwtService)
+    private readonly AppDbContext _context;
+    private readonly IOtpService _otpService;
+    public UserService(IUserRepository userRepository, UserManager<User> userManager, SignInManager<User> signInManager, IJwtService jwtService, AppDbContext context, IOtpService otpService)
 	{
 		_userRepository = userRepository;	
 		_userManager = userManager;
 		_signInManager = signInManager;
 		_jwtService = jwtService;
+		_context = context;
+		_otpService = otpService;
     }
 
     public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
@@ -136,6 +142,100 @@ public class UserService : IUserService
 		};
     }
 
+    public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordRequestDto request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+
+        if (user == null)
+            throw new Exception("User does not exist");
+
+        var code = _otpService.GenerateOtp(); 
+
+		var newOtp = new Otp
+		{
+			Id = Guid.NewGuid(),
+			Code = code,
+			UserId = user.Id,
+			Purpose = "PasswordReset",
+			IsUsed = false,
+			IsActive = true,
+			ExpiryTime = DateTime.UtcNow.AddMinutes(5)
+		};
+
+        await _context.Otps.AddAsync(newOtp);
+        await _context.SaveChangesAsync();
+
+        return new ForgotPasswordResponseDto
+        {
+            Message = "OTP generated successfully",
+            Otp = code
+        };
+    }
+
+    public async Task<ChangePasswordResponseDto> ChangePasswordAsync(ChangePasswordRequestDto request)
+    {
+        var user = await _userManager.FindByIdAsync(request.UserId);
+
+        if (user == null)
+        {
+            return new ChangePasswordResponseDto
+            {
+                Message = "User not found",
+                IsSuccessful = false
+            };
+        }
+        var otp = await _context.Otps
+            .Where(x => x.UserId == user.Id
+                    && x.Code == request.OtpCode
+                    && x.Purpose == "PasswordReset"
+                    && x.IsActive
+                    && !x.IsUsed)
+            .OrderByDescending(x => x.Id)
+            .FirstOrDefaultAsync();
+
+        if (otp == null)
+        {
+            return new ChangePasswordResponseDto
+            {
+                Message = "Invalid OTP",
+                IsSuccessful = false
+            };
+        }
+
+        if (otp.ExpiryTime < DateTime.UtcNow)
+        {
+            return new ChangePasswordResponseDto
+            {
+                Message = "OTP has expired",
+                IsSuccessful = false
+            };
+        }
+
+        var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        var result = await _userManager.ResetPasswordAsync(user, resetToken, request.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            return new ChangePasswordResponseDto
+            {
+                Message = "Password reset failed",
+                IsSuccessful = false
+            };
+        }
+
+        otp.IsUsed = true;
+        otp.IsActive = false;
+
+        _context.Otps.Update(otp);
+        await _context.SaveChangesAsync();
+
+        return new ChangePasswordResponseDto
+        {
+            Message = "Password Changed Successfully",
+            IsSuccessful = true
+        };
+    }
 }
 
 

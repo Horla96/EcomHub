@@ -27,6 +27,8 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 //Jwt
 builder.Services.AddScoped<IJwtService, JwtService>();
 
+builder.Services.AddScoped<IOtpService, OtpService>();
+
 
 //Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();

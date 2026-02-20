@@ -17,8 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EcomHub.Application\EcomHub.Application.csproj" />
+    <!--<ProjectReference Include="..\EcomHub.Application\EcomHub.Application.csproj" />-->
     <ProjectReference Include="..\EcomHub.Domain\EcomHub.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
