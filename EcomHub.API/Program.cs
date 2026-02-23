@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("EcomHubCon")));
 
-builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
+builder.Services.AddIdentity<User, Role>(options =>
 {
     // configure password, user, lockout options as needed
     options.Password.RequireNonAlphanumeric = false;
