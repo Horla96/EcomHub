@@ -6,8 +6,8 @@ public class BaseEntity
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
-    public string CreatedBy { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public string CreatedBy { get; set; } = "System";
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string? UpdatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
