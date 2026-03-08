@@ -9,5 +9,8 @@ public class Product : BaseEntity
     public decimal Price { get; set; }
     public int StockQuantity { get; set; }
     public Guid CategoryId { get; set; }
-    public ProductStatus Status { get; set; } 
+    public ProductStatus Status { get; set; }
+
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedAt { get; set; }
 }
