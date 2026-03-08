@@ -20,12 +20,15 @@ public class ProductRepository : IProductRepository
 
     public async Task<List<Product>> GetAllProductAsync()
     {
-        return await _context.Products.ToListAsync();
+        return await _context.Products
+            .Where(p => !p.IsDeleted)
+            .ToListAsync();
     }
 
     public async Task<Product?> GetProductByIdAsync(Guid id)
     {
-        return await _context.Products.FindAsync(id);
+        return await _context.Products
+            .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
     }
 
     public async Task UpdateProductAsync(Product product)
@@ -36,7 +39,10 @@ public class ProductRepository : IProductRepository
 
     public async Task DeleteProductAsync(Product product)
     {
-        _context.Products.Remove(product);
+        product.IsDeleted = true;
+        product.DeletedAt = DateTime.UtcNow;
+
+        _context.Products.Update(product);
         await _context.SaveChangesAsync();
     }
 }

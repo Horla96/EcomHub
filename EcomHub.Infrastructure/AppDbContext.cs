@@ -1,5 +1,4 @@
 ﻿using EcomHub.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +27,9 @@ public class AppDbContext : IdentityDbContext<User, Role, Guid>
         builder.Entity<User>()
             .Property(u => u.Role)
             .HasConversion<string>();
+
+        builder.Entity<Product>()
+        .HasQueryFilter(p => !p.IsDeleted);
 
         builder.Entity<Role>().HasData(
         new Role
