@@ -113,4 +113,40 @@ public class ProductService : IProductService
 
         return true;
     }
+
+    public async Task<List<ProductSearchResponseDto>> SearchProductAsync(string keyword)
+    {
+        var products = await _productRepository.SearchProductAsync(keyword);
+
+        return products.Select(product => new ProductSearchResponseDto
+        {
+            //Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+            StockQuantity = product.StockQuantity,
+            Status = product.Status
+        }).ToList();
+    }
+
+    public async Task<List<ProductResponseDto>> FilterProductsAsync(ProductFilterRequestDto request)
+    {
+        var products = await _productRepository.FilterProductsAsync(
+            request.CategoryId,
+            request.MinPrice,
+            request.MaxPrice,
+            request.CreatedAfter
+        );
+
+        return products.Select(product => new ProductResponseDto
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+            StockQuantity = product.StockQuantity,
+            Status = product.Status
+
+        }).ToList();
+    }
 }
