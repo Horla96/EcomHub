@@ -19,6 +19,7 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> Create(CreateProductRequestDto request)
     {
         var result = await _productService.CreateAsync(request);
+
         return Ok(result);
     }
 
@@ -26,6 +27,7 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _productService.GetAllAsync();
+
         return Ok(result);
     }
 
@@ -60,5 +62,21 @@ public class ProductController : ControllerBase
             return NotFound("Product not found");
 
         return Ok("Product deleted successfully");
+    }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchProduct([FromQuery] string keyword)
+    {
+        var result = await _productService.SearchProductAsync(keyword);
+
+        return Ok(result);
+    }
+
+    [HttpPost("filter")]
+    public async Task<IActionResult> FilterProducts(ProductFilterRequestDto request)
+    {
+        var result = await _productService.FilterProductsAsync(request);
+
+        return Ok(result);
     }
 }

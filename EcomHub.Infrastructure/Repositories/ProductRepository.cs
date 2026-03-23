@@ -45,4 +45,30 @@ public class ProductRepository : IProductRepository
         _context.Products.Update(product);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<Product>> SearchProductAsync(string keyword)
+    {
+        return await _context.Products
+        .Where(p => p.Name.ToLower().Contains(keyword.ToLower()))
+        .ToListAsync();
+    }
+
+    public async Task<List<Product>> FilterProductsAsync(Guid? categoryId, decimal? minPrice, decimal? maxPrice, DateTime? createdAfter)
+    {
+        var query = _context.Products.AsQueryable();
+
+        if (categoryId.HasValue)
+            query = query.Where(p => p.CategoryId == categoryId);
+
+        if (minPrice.HasValue)
+            query = query.Where(p => p.Price >= minPrice);
+
+        if (maxPrice.HasValue)
+            query = query.Where(p => p.Price <= maxPrice);
+
+        if (createdAfter.HasValue)
+            query = query.Where(p => p.CreatedAt >= createdAfter);
+
+        return await query.ToListAsync();
+    }
 }
