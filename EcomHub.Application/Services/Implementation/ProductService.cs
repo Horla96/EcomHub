@@ -149,4 +149,25 @@ public class ProductService : IProductService
 
         }).ToList();
     }
+
+    public async Task<List<ProductResponseDto>> GetProductsAsync(ProductQueryDto request)
+    {
+        var products = await _productRepository.GetProductsAsync(
+            request.PageNumber,
+            request.PageSize,
+            request.SortBy,
+            request.SortOrder
+        );
+
+        return products.Select(product => new ProductResponseDto
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+            StockQuantity = product.StockQuantity,
+            Status = product.Status
+
+        }).ToList();
+    }
 }

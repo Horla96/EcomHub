@@ -11,6 +11,6 @@ public interface IProductRepository
     Task<List<Product>> GetAllProductAsync();
     Task UpdateProductAsync(Product product);
     Task DeleteProductAsync(Product product);
-   
+    Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize, string? sortBy, string? sortOrder);
 
 }
