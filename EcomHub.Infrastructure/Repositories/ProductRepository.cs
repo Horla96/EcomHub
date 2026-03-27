@@ -71,4 +71,31 @@ public class ProductRepository : IProductRepository
 
         return await query.ToListAsync();
     }
+
+    public async Task<List<Product>> GetProductsAsync(int pageNumber, int pageSize, string? sortBy, string? sortOrder)
+    {
+        var query = _context.Products.AsQueryable();
+
+        query = (sortBy?.ToLower(), sortOrder?.ToLower()) switch
+        {
+            ("price", "asc") => query.OrderBy(p => p.Price),
+            ("price", "desc") => query.OrderByDescending(p => p.Price),
+
+            ("name", "asc") => query.OrderBy(p => p.Name),
+            ("name", "desc") => query.OrderByDescending(p => p.Name),
+
+            ("createdat", "asc") => query.OrderBy(p => p.CreatedAt),
+            ("createdat", "desc") => query.OrderByDescending(p => p.CreatedAt),
+
+            _ => query.OrderByDescending(p => p.CreatedAt)
+        };
+
+        var skip = (pageNumber - 1) * pageSize;
+
+        query = query
+            .Skip(skip)
+            .Take(pageSize);
+
+        return await query.ToListAsync();
+    }
 }

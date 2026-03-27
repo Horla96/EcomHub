@@ -79,4 +79,12 @@ public class ProductController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpPost("products")]
+    public async Task<IActionResult> GetProducts(ProductQueryDto request)
+    {
+        var result = await _productService.GetProductsAsync(request);
+
+        return Ok(result);
+    }
 }

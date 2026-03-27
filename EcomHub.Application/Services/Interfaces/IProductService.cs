@@ -12,4 +12,5 @@ public interface IProductService
     Task<bool> DeleteAsync(Guid id);
     Task<List<ProductSearchResponseDto>> SearchProductAsync(string keyword);
     Task<List<ProductResponseDto>> FilterProductsAsync(ProductFilterRequestDto request);
+    Task<List<ProductResponseDto>> GetProductsAsync(ProductQueryDto request);
 }
