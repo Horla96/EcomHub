@@ -31,6 +31,9 @@ public class AppDbContext : IdentityDbContext<User, Role, Guid>
         builder.Entity<Product>()
         .HasQueryFilter(p => !p.IsDeleted);
 
+        builder.Entity<Category>()
+        .HasQueryFilter(c => !c.IsDeleted);
+
         builder.Entity<Role>().HasData(
         new Role
         {
